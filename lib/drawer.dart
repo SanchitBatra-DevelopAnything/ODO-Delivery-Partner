@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:odo_delivery_partner/login.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
@@ -11,7 +12,7 @@ class Sidebar extends StatelessWidget {
         children: [
           DrawerHeader(
   decoration: const BoxDecoration(
-    color: Color(0xFF2C2455),
+    color: Login.primaryColor,
   ),
   child: Center(
     child: Column(
@@ -26,7 +27,7 @@ class Sidebar extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         const Text(
-          "ODO Sales Executive",
+          "ODO Delivery Partner",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -38,17 +39,17 @@ class Sidebar extends StatelessWidget {
   ),
 ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text("Members"),
+            leading: Icon(Icons.factory),
+            title: Text("Orders"),
             onTap: () {
               //remove all routes and go to members
               Navigator.pushNamedAndRemoveUntil(
-                  context, '/members', (route) => false);
+                  context, '/assignments', (route) => false);
             }
           ),
           ListTile(
-            leading: Icon(Icons.factory),
-            title: Text("Orders"),
+            leading: Icon(Icons.currency_rupee),
+            title: Text("Store Balance"),
             onTap: () {
               //remove all routes and go to members
               Navigator.pushNamedAndRemoveUntil(

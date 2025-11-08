@@ -98,7 +98,7 @@ class _LoginState extends State<Login> {
                               if (isSuccess) {
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
-                                  "/members",
+                                  "/assignments",
                                   (route) =>
                                       false, // removes all previous routes
                                 );
