@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:odo_delivery_partner/login.dart';
+import 'package:odo_delivery_partner/orders.dart';
+import 'package:odo_delivery_partner/providers/auth.dart';
+import 'package:odo_delivery_partner/providers/order.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:odo_delivery_partner/drawer.dart'; // your sidebar
 
@@ -12,26 +16,44 @@ class MyAssignmentsScreen extends StatefulWidget {
 }
 
 class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
-  final List<Map<String, dynamic>> assignments = [
-    {
-      "shop": "Shop A",
-      "orderIds": ["order_1", "order_2"],
-      "totalAmount": 450,
-      "referrerName": "Ramesh",
-      "referrerContact": "9876543210",
-      "delivery-latitude": "28.6139",
-      "delivery-longitude": "77.2090",
-    },
-    {
-      "shop": "Shop B",
-      "orderIds": ["order_3"],
-      "totalAmount": 300,
-      "referrerName": "Suresh",
-      "referrerContact": "9123456789",
-      "delivery-latitude": "28.6448",
-      "delivery-longitude": "77.2167",
-    },
-  ];
+
+  bool _isFirstTime = true;
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+      if (_isFirstTime) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
+        final deliveryPartnerId = Provider.of<AuthProvider>(context, listen: false).loggedInDeliveryPartner?['id'];
+        ordersProvider.fetchOrderMetadata(deliveryPartnerId);
+      });
+      _isFirstTime = false;
+  }
+
+  }
+
+  //sample data from provider.
+  // final List<Map<String, dynamic>> assignments = [
+  //   {
+  //     "shop": "Shop A",
+  //     "orderIds": ["order_1", "order_2"],
+  //     "totalAmount": 450,
+  //     "referrerName": "Ramesh",
+  //     "referrerContact": "9876543210",
+  //     "delivery-latitude": "28.6139",
+  //     "delivery-longitude": "77.2090",
+  //   },
+  //   {
+  //     "shop": "Shop B",
+  //     "orderIds": ["order_3"],
+  //     "totalAmount": 300,
+  //     "referrerName": "Suresh",
+  //     "referrerContact": "9123456789",
+  //     "delivery-latitude": "28.6448",
+  //     "delivery-longitude": "77.2167",
+  //   },
+  // ];
 
   Future<void> openInGoogleMaps(double lat, double lng) async {
     final url = Uri.parse(
@@ -48,6 +70,10 @@ class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final assignments =
+        ordersProvider.ordersMetaData["shops"] ?? [];
+
     return MediaQuery.removePadding(
       context: context,
       removeTop: true, // 👈 removes the AppBar’s top padding
@@ -69,7 +95,7 @@ class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
             ),
           ),
         ),
-        body: ListView.builder(
+        body:  ordersProvider.isLoading ? Center(child: CircularProgressIndicator(color: Login.primaryColor,),) : assignments.isEmpty ? Center(child: Text("No orders assigned!"),): ListView.builder(
           padding: const EdgeInsets.all(12),
           itemCount: assignments.length,
           itemBuilder: (context, index) {

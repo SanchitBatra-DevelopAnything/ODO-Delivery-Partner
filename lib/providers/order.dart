@@ -4,49 +4,42 @@ import 'package:http/http.dart' as http;
 
 class OrdersProvider with ChangeNotifier
 {
-  Map<String, dynamic> ordersData = {};
+  Map<String, dynamic> ordersMetaData = {};
   bool isLoading = false;
-  DateTime? selectedDate;
 
+  Future<void> fetchOrderMetadata(String deliveryPartnerId) async {
+    isLoading = true;
+    ordersMetaData = {}; // clear old data
+    notifyListeners();
 
-  Future<void> fetchOrderData(String dateString , String referrerId) async {
-  isLoading = true;
-  selectedDate = _parseDate(dateString);
+    print("Fetching order metadata for deliveryPartnerId = $deliveryPartnerId");
 
-  // ✅ clear old data right away
-  ordersData = {
-    "orders": [],
-    "totalAmount": 0.0,
-  };
-  notifyListeners(); // ✅ UI will instantly show fresh loading state
-  print("Date String = "+dateString);
-  try {
-    final url = Uri.parse(
-      "https://getordersforreferrerapp-jipkkwipyq-uc.a.run.app/" + "?date=" +dateString.toString() + "&referrerId=" + referrerId.toString(),
-    );
+    try {
+      // 👇 replace with your actual Firebase Function endpoint
+      final url = Uri.parse(
+        "https://getassignedordersmetadata-jipkkwipyq-uc.a.run.app"
+        "?deliveryPartnerId=$deliveryPartnerId",
+      );
 
-    final response = await http.get(url);
+      final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      ordersData = jsonDecode(response.body);
-    } else {
-      print("Error: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Convert list into a map for easy lookup by shop name
+        ordersMetaData = {
+          "shops": data,
+        };
+        print("Fetched ${data.length} shops for deliveryPartnerId: $deliveryPartnerId");
+      } else {
+        print("Error fetching metadata: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception while fetching metadata: $e");
     }
-  } catch (e) {
-    print("Exception while fetching orders: $e");
+
+    isLoading = false;
+    notifyListeners();
   }
-
-  isLoading = false;
-  notifyListeners();
-}
-
-DateTime _parseDate(String dateStr) {
-  final parts = dateStr.split("-");
-  return DateTime(
-    int.parse(parts[2]),
-    int.parse(parts[1]),
-    int.parse(parts[0]),
-  );
-}
 
 }

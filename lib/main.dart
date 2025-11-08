@@ -65,7 +65,6 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
             routes: {
               '/': (context) => const Login(),
               '/assignments': (context) => const MyAssignmentsScreen(),
-              '/orders': (context) => const Orders(),
             },
           );
         }
