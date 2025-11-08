@@ -12,11 +12,11 @@ class MemberOrdersScreen extends StatefulWidget {
 
 class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
 
+  bool _isFirstTime = true;
+
    @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    bool _isFirstTime = true;
 
     if (_isFirstTime) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -28,6 +28,8 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
           print("⚠️ No orderIds provided to MemberOrdersScreen");
           return;
         }
+
+        print("ordersIds are : ${args["orderIds"]}");
 
         final List<String> orderIds =
             List<String>.from(args["orderIds"] ?? []);
@@ -137,8 +139,8 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
     //   },
     // ];
     final OrdersProvider ordersProvider =
-        Provider.of<OrdersProvider>(context);
-    final orders = ordersProvider.getMemberOrders["orders"];
+        Provider.of<OrdersProvider>(context , listen:true);
+    final orders = ordersProvider.getMemberOrders;
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: PreferredSize(
@@ -174,7 +176,7 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  orders[
+                  orders[0][
                       "shop"
                   ],
                   style: const TextStyle(
@@ -184,7 +186,7 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  orders["shopAddress"] ?? "No Address",
+                  orders[0]["shopAddress"] ?? "No Address",
                   style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 2),

@@ -8,10 +8,11 @@ class OrdersProvider with ChangeNotifier
   bool isLoading = false;
   Map<String , dynamic> memberOrders = {};
 
-  //create a getter for memberOrders where you give a copy of it
-  Map<String, dynamic> get getMemberOrders {
-    return {...memberOrders};
-  }
+  List<dynamic> get getMemberOrders {
+  final orders = memberOrders["orders"];
+  if (orders is List) return orders;
+  return []; // ✅ Always return an empty list if null or invalid
+}
 
   Future<void> fetchOrderMetadata(String deliveryPartnerId) async {
     isLoading = true;
