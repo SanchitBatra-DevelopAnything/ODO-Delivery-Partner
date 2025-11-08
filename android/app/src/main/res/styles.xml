@@ -1,0 +1,3 @@
+<style name="NormalTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <item name="android:windowFullscreen">true</item>
+</style>
