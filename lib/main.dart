@@ -59,7 +59,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
           final route = snapshot.data?.toString() ?? '/';
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'ODO Referrer',
+            title: 'ODO Delivery Partner',
             theme: ThemeData(primarySwatch: Colors.blue),
             initialRoute: route,
             routes: {

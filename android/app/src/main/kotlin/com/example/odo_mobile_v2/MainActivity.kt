@@ -1,4 +1,4 @@
-package com.production.ODOSalesExecutive
+package com.production.ODODeliveryPartner
 
 import io.flutter.embedding.android.FlutterActivity
 
