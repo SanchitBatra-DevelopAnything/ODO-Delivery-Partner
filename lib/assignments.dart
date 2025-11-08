@@ -55,18 +55,39 @@ class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
   //   },
   // ];
 
-  Future<void> openInGoogleMaps(double lat, double lng) async {
-    final url = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
+Future<void> openInGoogleMaps(BuildContext context, double lat, double lng) async {
+  final String googleMapsUrl = 
+  "https://www.google.com/maps/search/?api=1&query=" + lat.toString() + "," + lng.toString();
+
+  try {
+    final Uri uri = Uri.parse(googleMapsUrl);
+
+    // ✅ Try to launch Google Maps in external app
+    final bool launched = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
     );
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Could not open Google Maps")),
+
+    if (!launched) {
+      // ✅ Fallback: open in browser
+      final bool browserLaunch = await launchUrl(
+        uri,
+        mode: LaunchMode.platformDefault,
       );
+
+      if (!browserLaunch) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Could not open Google Maps or browser")),
+        );
+      }
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error launching Maps: $e")),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +227,7 @@ class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
                         onPressed: () {
                           final lat = double.parse(shop["delivery-latitude"]);
                           final lng = double.parse(shop["delivery-longitude"]);
-                          openInGoogleMaps(lat, lng);
+                          openInGoogleMaps(context,lat, lng);
                         },
                         icon: const Icon(Icons.navigation_outlined, size: 18),
                         label: const Text(

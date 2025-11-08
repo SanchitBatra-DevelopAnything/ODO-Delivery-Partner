@@ -18,7 +18,7 @@ class OrdersProvider with ChangeNotifier
       // 👇 replace with your actual Firebase Function endpoint
       final url = Uri.parse(
         "https://getassignedordersmetadata-jipkkwipyq-uc.a.run.app"
-        "?deliveryPartnerId=$deliveryPartnerId",
+        "?deliveryPartnerId=" + deliveryPartnerId,
       );
 
       final response = await http.get(url);
