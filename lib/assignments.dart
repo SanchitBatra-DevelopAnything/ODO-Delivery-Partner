@@ -125,7 +125,6 @@ Future<void> openInGoogleMaps(BuildContext context, double lat, double lng) asyn
             return InkWell(
               onTap: ()=>{
                 Navigator.pushNamed(context, '/orders', arguments: {
-                  'shopName': shop['shop'],
                   'orderIds': shop['orderIds'],
                 })
               },

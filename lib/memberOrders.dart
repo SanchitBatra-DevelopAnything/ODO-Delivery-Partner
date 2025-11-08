@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:odo_delivery_partner/login.dart';
+import 'package:odo_delivery_partner/providers/order.dart';
+import 'package:provider/provider.dart';
 
 class MemberOrdersScreen extends StatefulWidget {
   const MemberOrdersScreen({super.key});
@@ -9,97 +11,134 @@ class MemberOrdersScreen extends StatefulWidget {
 }
 
 class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
+
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    bool _isFirstTime = true;
+
+    if (_isFirstTime) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // ✅ Retrieve orderIds passed through Navigator
+        final args =
+            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+        if (args == null || args["orderIds"] == null) {
+          print("⚠️ No orderIds provided to MemberOrdersScreen");
+          return;
+        }
+
+        final List<String> orderIds =
+            List<String>.from(args["orderIds"] ?? []);
+
+        // ✅ Fetch from provider
+        final ordersProvider =
+            Provider.of<OrdersProvider>(context, listen: false);
+
+        ordersProvider.fetchMemberOrders(orderIds);
+      });
+
+      _isFirstTime = false;
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> orders = [
-      {
-        "id": "-Ob80fx4_UQqjtSTH9ek",
-        "GST": "1234",
-        "area": "NOIDA",
-        "contact": "8743907244",
-        "delivery-latitude": "28.569466",
-        "delivery-longitude": "77.384375",
-        "deviceToken": "",
-        "items": [
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-          
-        ],
-        "orderDate": "9-10-2025",
-        "orderTime": "10/9/2025 6:21:25 PM",
-        "orderedBy": "POORDAR",
-        "shop": "POORDAR STORE",
-        "shopAddress": "Bahlolpur Noida 63",
-        "status": "out-for-delivery",
-        "totalPrice": 6000.0,
-        "totalPriceAfterDiscount": 5100.0,
-      },
-      {
-        "id": "-Ob80fx4_UQqjtSTH9ek",
-        "GST": "1234",
-        "area": "NOIDA",
-        "contact": "8743907244",
-        "delivery-latitude": "28.569466",
-        "delivery-longitude": "77.384375",
-        "deviceToken": "",
-        "items": [
-          {
-            "brand": "OREO",
-            "discount_percentage": 15,
-            "item": "OREO VANILLA RS 10 x 12",
-            "price": 6000,
-            "priceAfterDiscount": 5100.0,
-            "quantity": 50,
-          },
-        ],
-        "orderDate": "9-10-2025",
-        "orderTime": "10/9/2025 6:21:25 PM",
-        "orderedBy": "POORDAR",
-        "shop": "POORDAR STORE",
-        "shopAddress": "Bahlolpur Noida 63",
-        "status": "out-for-delivery",
-        "totalPrice": 6000.0,
-        "totalPriceAfterDiscount": 5100.0,
-      },
-    ];
+    // final List<dynamic> orders = [
+    //   {
+    //     "id": "-Ob80fx4_UQqjtSTH9ek",
+    //     "GST": "1234",
+    //     "area": "NOIDA",
+    //     "contact": "8743907244",
+    //     "delivery-latitude": "28.569466",
+    //     "delivery-longitude": "77.384375",
+    //     "deviceToken": "",
+    //     "items": [
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+
+    //     ],
+    //     "orderDate": "9-10-2025",
+    //     "orderTime": "10/9/2025 6:21:25 PM",
+    //     "orderedBy": "POORDAR",
+    //     "shop": "POORDAR STORE",
+    //     "shopAddress": "Bahlolpur Noida 63",
+    //     "status": "out-for-delivery",
+    //     "totalPrice": 6000.0,
+    //     "totalPriceAfterDiscount": 5100.0,
+    //   },
+    //   {
+    //     "id": "-Ob80fx4_UQqjtSTH9ek",
+    //     "GST": "1234",
+    //     "area": "NOIDA",
+    //     "contact": "8743907244",
+    //     "delivery-latitude": "28.569466",
+    //     "delivery-longitude": "77.384375",
+    //     "deviceToken": "",
+    //     "items": [
+    //       {
+    //         "brand": "OREO",
+    //         "discount_percentage": 15,
+    //         "item": "OREO VANILLA RS 10 x 12",
+    //         "price": 6000,
+    //         "priceAfterDiscount": 5100.0,
+    //         "quantity": 50,
+    //       },
+    //     ],
+    //     "orderDate": "9-10-2025",
+    //     "orderTime": "10/9/2025 6:21:25 PM",
+    //     "orderedBy": "POORDAR",
+    //     "shop": "POORDAR STORE",
+    //     "shopAddress": "Bahlolpur Noida 63",
+    //     "status": "out-for-delivery",
+    //     "totalPrice": 6000.0,
+    //     "totalPriceAfterDiscount": 5100.0,
+    //   },
+    // ];
+    final OrdersProvider ordersProvider =
+        Provider.of<OrdersProvider>(context);
+    final orders = ordersProvider.getMemberOrders["orders"];
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: PreferredSize(
@@ -123,7 +162,7 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
           ),
         ),
       ),
-      body: Column(
+      body:ordersProvider.isLoading ? Center(child: CircularProgressIndicator(color: Login.primaryColor,),): Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 🏪 Shop Header
@@ -135,7 +174,9 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "DUMMY SHOp",
+                  orders[
+                      "shop"
+                  ],
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -143,14 +184,10 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "dummy shoo",
+                  orders["shopAddress"] ?? "No Address",
                   style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  "📞 987388288122",
-                  style: const TextStyle(fontSize: 13, color: Colors.black54),
-                ),
               ],
             ),
           ),
@@ -191,7 +228,7 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "#${index + 1}",
+                              "ORDER #${index + 1}",
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -272,6 +309,12 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
                             color: Colors.black54,
                           ),
                         ),
+
+                        const SizedBox(height: 4),
+                        Text(
+                  "📞 987388288122",
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
+                ),
 
                         // 👉 Click hint
                         const SizedBox(height: 4),
