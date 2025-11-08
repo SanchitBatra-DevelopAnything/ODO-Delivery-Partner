@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:odo_delivery_partner/assignments.dart';
 import 'package:odo_delivery_partner/login.dart';
-import 'package:odo_delivery_partner/orders.dart';
+import 'package:odo_delivery_partner/memberOrders.dart';
 import 'package:odo_delivery_partner/providers/auth.dart';
 import 'package:odo_delivery_partner/providers/member.dart';
 import 'package:odo_delivery_partner/providers/order.dart';
@@ -65,6 +65,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
             routes: {
               '/': (context) => const Login(),
               '/assignments': (context) => const MyAssignmentsScreen(),
+              '/orders': (context) => const MemberOrdersScreen(),
             },
           );
         }
