@@ -23,7 +23,10 @@ class _LoginState extends State<Login> {
       return;
     }
     if (_isFirstTime) {
-      Provider.of<AuthProvider>(context, listen: false).fetchDeliveryPartnerAccounts();
+      Provider.of<AuthProvider>(
+        context,
+        listen: false,
+      ).fetchDeliveryPartnerAccounts();
     }
     _isFirstTime = false; //never run the above if again.
     super.didChangeDependencies();
@@ -60,8 +63,16 @@ class _LoginState extends State<Login> {
                 controller: contactController,
                 decoration: InputDecoration(
                   labelText: "Enter your mobile number",
+                  floatingLabelStyle: const TextStyle(color: Login.primaryColor),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(
+                      color: Login.primaryColor, // 👈 Border color when focused
+                      width: 2.0,
+                    ),
                   ),
                 ),
               ),
