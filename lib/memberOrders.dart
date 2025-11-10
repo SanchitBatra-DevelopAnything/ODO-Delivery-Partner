@@ -212,7 +212,7 @@ class _MemberOrdersScreenState extends State<MemberOrdersScreen> {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      '/orderDetails',
+                      '/detail',
                       arguments: order,
                     );
                   },
