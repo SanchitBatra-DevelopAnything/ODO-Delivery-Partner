@@ -105,13 +105,13 @@ Future<void> openInGoogleMaps(BuildContext context, double lat, double lng) asyn
           elevation: 1,
           centerTitle: true,
           backgroundColor: Login.primaryColor,
-          iconTheme: const IconThemeData(color: Colors.black87),
+          iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(
             "My Assignments",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
         ),

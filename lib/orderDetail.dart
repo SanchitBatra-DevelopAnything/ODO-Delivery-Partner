@@ -9,6 +9,128 @@ class OrderDetailsScreen extends StatefulWidget {
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
 
+void showAlertDialog(
+  BuildContext context,
+  String message, {
+  bool shouldShowReasons = false,
+  VoidCallback? onOkPressed,
+  VoidCallback? onClickShopPhoto,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      String? selectedReason;
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            title: const Text(
+              "REJECT?",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  message,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+
+                // 🔽 Show reasons dropdown only if shouldShowReasons = true
+                if (shouldShowReasons) ...[
+                  const Text(
+                    "Select reason for rejection:",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: selectedReason,
+                    items: const [
+                      DropdownMenuItem(
+                          value: "No Payment.", child: Text("No Payment.")),
+                      DropdownMenuItem(
+                          value: "Partial delivery.",
+                          child: Text("Partial delivery.")),
+                      DropdownMenuItem(
+                          value: "Damaged product.",
+                          child: Text("Damaged product.")),
+                      DropdownMenuItem(
+                          value: "Asking for credit.",
+                          child: Text("Asking for credit.")),
+                      DropdownMenuItem(
+                          value: "Shop closed.", child: Text("Shop closed.")),
+                      DropdownMenuItem(
+                          value: "Fake order.", child: Text("Fake order.")),
+                      DropdownMenuItem(
+                          value: "Others (I will explain)",
+                          child: Text("Others (I will explain)")),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedReason = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 10),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+
+            // 🎯 Conditional Buttons
+            actions: [
+              if (!shouldShowReasons)
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (onOkPressed != null) onOkPressed();
+                  },
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+              if (shouldShowReasons && selectedReason != null)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Login.primaryColor,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (onClickShopPhoto != null) onClickShopPhoto();
+                  },
+                  child: const Text(
+                    "Click Shop Photo",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
+
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
  // same as Login.primaryColor
   @override
@@ -26,12 +148,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Order Details",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+            "Order Detail",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.white,
+            ),
           ),
-        ),
         elevation: 2,
       ),
       body: Container(
@@ -183,6 +306,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ),
                     onPressed: () {
                       // Handle order rejected
+                      showAlertDialog(context , "Shop ki photo kheechke daalo" , shouldShowReasons: true);
                     },
                     child: const Text(
                       "Order Rejected",
