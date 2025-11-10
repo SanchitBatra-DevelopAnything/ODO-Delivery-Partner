@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:odo_delivery_partner/login.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
@@ -128,6 +131,29 @@ void showAlertDialog(
       );
     },
   );
+}
+
+
+Future<File?> openCamera(BuildContext context) async {
+  final ImagePicker picker = ImagePicker();
+
+  try {
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.rear,
+      imageQuality: 85, // compress to 85% quality
+    );
+
+    if (pickedFile != null) {
+      return File(pickedFile.path); // return captured image
+    } else {
+      print("No image captured.");
+      return null;
+    }
+  } catch (e) {
+    showAlertDialog(context , "Failed to open camera: $e" , shouldShowReasons: false , onOkPressed: () => {Navigator.of(context).pop()},);
+    return null;
+  }
 }
 
 
@@ -306,7 +332,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ),
                     onPressed: () {
                       // Handle order rejected
-                      showAlertDialog(context , "Shop ki photo kheechke daalo" , shouldShowReasons: true);
+                      showAlertDialog(context , "Shop ki photo kheechke daalo" , shouldShowReasons: true, onClickShopPhoto: ()=>openCamera(context));
                     },
                     child: const Text(
                       "Order Rejected",
