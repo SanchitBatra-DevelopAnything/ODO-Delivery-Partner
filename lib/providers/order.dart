@@ -81,5 +81,72 @@ class OrdersProvider with ChangeNotifier
   notifyListeners();
 }
 
+Future<bool> rejectOrder(
+    String orderId,
+    String status,
+    String choice,
+    String imageUrl,
+  ) async {
+    final url = Uri.parse("https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/activeDistributorOrders/$orderId.json");
 
+    try {
+      final response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "status": status,
+          "imageUrl": imageUrl,
+          "rejectionReason": choice,
+          "rejectedAt" : DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("✅ Order $orderId updated successfully.");
+        return true;
+      } else {
+        print("❌ Failed to update order $orderId. Status: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("⚠️ Exception during order update: $e");
+      rethrow;
+    }
+  }
+
+
+  Future<bool> deliverOrder(
+    String orderId,
+    String status,
+    String choice,
+    String imageUrl,
+  ) async {
+    final url = Uri.parse("https://odo-admin-app-default-rtdb.asia-southeast1.firebasedatabase.app/activeDistributorOrders/$orderId.json");
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "status": status,
+          "imageUrl": imageUrl,
+          "paymentType": choice,
+          "deliveredAt" : DateTime.now().toIso8601String(),
+        }),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print("✅ Order $orderId updated successfully.");
+        return true;
+      } else {
+        print("❌ Failed to update order $orderId. Status: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("⚠️ Exception during order update: $e");
+      rethrow;
+    }
+  }
 }
