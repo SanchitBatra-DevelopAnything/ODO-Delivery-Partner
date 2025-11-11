@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:odo_delivery_partner/login.dart';
 import 'package:odo_delivery_partner/providers/auth.dart';
 import 'package:odo_delivery_partner/providers/order.dart';
+import 'package:odo_delivery_partner/route_observer.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:odo_delivery_partner/drawer.dart'; // your sidebar
@@ -14,45 +15,57 @@ class MyAssignmentsScreen extends StatefulWidget {
   State<MyAssignmentsScreen> createState() => _MyAssignmentsScreenState();
 }
 
-class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> {
+class _MyAssignmentsScreenState extends State<MyAssignmentsScreen> with RouteAware {
 
-  bool _isFirstTime = true;
+  
+  bool _isSubscribed = false;
+
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-      if (_isFirstTime) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
-        final deliveryPartnerId = Provider.of<AuthProvider>(context, listen: false).loggedInDeliveryPartner?['id'];
-        ordersProvider.fetchOrderMetadata(deliveryPartnerId);
-      });
-      _isFirstTime = false;
+
+    if (!_isSubscribed) {
+      routeObserver.subscribe(this, ModalRoute.of(context)!);
+      _isSubscribed = true;
+    }
   }
 
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
-  //sample data from provider.
-  // final List<Map<String, dynamic>> assignments = [
-  //   {
-  //     "shop": "Shop A",
-  //     "orderIds": ["order_1", "order_2"],
-  //     "totalAmount": 450,
-  //     "referrerName": "Ramesh",
-  //     "referrerContact": "9876543210",
-  //     "delivery-latitude": "28.6139",
-  //     "delivery-longitude": "77.2090",
-  //   },
-  //   {
-  //     "shop": "Shop B",
-  //     "orderIds": ["order_3"],
-  //     "totalAmount": 300,
-  //     "referrerName": "Suresh",
-  //     "referrerContact": "9123456789",
-  //     "delivery-latitude": "28.6448",
-  //     "delivery-longitude": "77.2167",
-  //   },
-  // ];
+  @override
+  void didPush() {
+    // ✅ Defer provider call until after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _fetchOrders();
+    });
+  }
+
+  @override
+  void didPopNext() {
+    // ✅ Same here, avoid rebuild conflicts when coming back
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _fetchOrders();
+    });
+  }
+
+  void _fetchOrders() {
+    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
+    final deliveryPartnerId =
+        Provider.of<AuthProvider>(context, listen: false).loggedInDeliveryPartner?['id'];
+
+    if (deliveryPartnerId != null) {
+      ordersProvider.fetchOrderMetadata(deliveryPartnerId);
+    } else {
+      print("⚠️ No deliveryPartnerId found.");
+    }
+  }
+
 
 Future<void> openInGoogleMaps(BuildContext context, double lat, double lng) async {
   final String googleMapsUrl = 
@@ -115,7 +128,7 @@ Future<void> openInGoogleMaps(BuildContext context, double lat, double lng) asyn
             ),
           ),
         ),
-        body:  ordersProvider.isLoading ? Center(child: CircularProgressIndicator(color: Login.primaryColor,),) : assignments.isEmpty ? Center(child: Text("No orders assigned!"),): ListView.builder(
+        body:  ordersProvider.isLoading ? Center(child: CircularProgressIndicator(color: Login.primaryColor,),) : assignments.isEmpty ? Center(child: Text("No More orders assigned!"),): ListView.builder(
           padding: const EdgeInsets.all(12),
           itemCount: assignments.length,
           itemBuilder: (context, index) {

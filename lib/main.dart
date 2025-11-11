@@ -9,6 +9,7 @@ import 'package:odo_delivery_partner/orderDetail.dart';
 import 'package:odo_delivery_partner/providers/auth.dart';
 import 'package:odo_delivery_partner/providers/member.dart';
 import 'package:odo_delivery_partner/providers/order.dart';
+import 'package:odo_delivery_partner/route_observer.dart';
 import 'package:provider/provider.dart';
 
 
@@ -62,6 +63,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'ODO Delivery Partner',
             theme: ThemeData(primarySwatch: Colors.blue),
+            navigatorObservers: [routeObserver],
             initialRoute: route,
             routes: {
               '/': (context) => const Login(),
