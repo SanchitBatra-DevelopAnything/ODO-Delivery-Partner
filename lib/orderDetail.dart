@@ -185,8 +185,8 @@ void showAlertDialog(
                     Navigator.of(context).pop();
                     if (onClickShopPhoto != null) onClickShopPhoto((selectedReasonForRejection ?? selectedPaymentTypeAtDelivery)!);
                   },
-                  child: const Text(
-                    "Click Shop Photo",
+                  child: Text(
+                    "Click Photo",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -218,7 +218,7 @@ Future<String?> handleCameraAndUpload(
     setLoading(true);
 
     // Step 3️⃣ Upload image to Firebase
-    final String? imageUrl = await _uploadImageToFirebase(imageFile);
+    final String? imageUrl = await _uploadImageToFirebase(imageFile , status);
     if (imageUrl == null) {
       setLoading(false);
       showAlertDialog(
@@ -284,7 +284,7 @@ Future<File?> _captureImage(BuildContext context) async {
 }
 
 /// Step 3️⃣ – Upload image to Firebase Storage and return its URL
-Future<String?> _uploadImageToFirebase(File imageFile) async {
+Future<String?> _uploadImageToFirebase(File imageFile , String? status) async {
   try {
     final DateTime now = DateTime.now();
     final String year = now.year.toString();
@@ -292,7 +292,11 @@ Future<String?> _uploadImageToFirebase(File imageFile) async {
     final String day = DateFormat('dd').format(now);
     final String timestamp = now.millisecondsSinceEpoch.toString();
 
-    final String filePath = 'rejections/$year/$month/$day/$timestamp.jpg';
+    String filePath = 'rejections/$year/$month/$day/$timestamp.jpg';
+    if(status == "delivered")
+    {
+      filePath = "deliveries/$year/$month/$day/$timestamp.jpg";
+    }
     final Reference storageRef = FirebaseStorage.instance.ref().child(filePath);
 
     final UploadTask uploadTask = storageRef.putFile(imageFile);
