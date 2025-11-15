@@ -7,6 +7,7 @@ class OrdersProvider with ChangeNotifier
   Map<String, dynamic> ordersMetaData = {};
   bool isLoading = false;
   Map<String , dynamic> memberOrders = {};
+  Map<String , dynamic> storeBalanceData = {};
 
   List<dynamic> get getMemberOrders {
   final orders = memberOrders["orders"];
@@ -149,4 +150,47 @@ Future<bool> rejectOrder(
       rethrow;
     }
   }
+
+
+  Future<void> fetchStoreBalance(String deliveryPartnerId) async {
+  isLoading = true;
+  storeBalanceData = {}; 
+  notifyListeners();
+
+  print("Fetching store balance data for deliveryPartnerId = $deliveryPartnerId");
+
+  try {
+    final url = Uri.parse(
+      "https://getstorebalance-jipkkwipyq-uc.a.run.app"
+      "?partnerId=$deliveryPartnerId",   // ensure query param matches backend
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json =
+          jsonDecode(response.body);
+
+      // Convert EXACTLY into required map format
+      storeBalanceData = {
+        "totalHisaab": json["totalHisaab"] ?? 0,
+        "data": Map<String, dynamic>.from(json["data"] ?? {}),
+      };
+
+      print("Store balance fetched successfully:");
+      print(storeBalanceData);
+    } else {
+      print("Error fetching store balance: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Exception while fetching store balance: $e");
+  }
+
+  isLoading = false;
+  notifyListeners();
+}
+
+
+
+
 }
