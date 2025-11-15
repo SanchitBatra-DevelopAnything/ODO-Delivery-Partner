@@ -10,6 +10,7 @@ import 'package:odo_delivery_partner/providers/auth.dart';
 import 'package:odo_delivery_partner/providers/member.dart';
 import 'package:odo_delivery_partner/providers/order.dart';
 import 'package:odo_delivery_partner/route_observer.dart';
+import 'package:odo_delivery_partner/storebalance.dart';
 import 'package:provider/provider.dart';
 
 
@@ -70,6 +71,7 @@ class MaterialAppWithInitialRoute extends StatelessWidget {
               '/assignments': (context) => const MyAssignmentsScreen(),
               '/orders': (context) => const MemberOrdersScreen(),
               '/detail':(context)=> const OrderDetailsScreen(),
+              '/storeBalance' : (context) => StoreBalanceScreen(),
             },
           );
         }

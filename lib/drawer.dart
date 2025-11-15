@@ -53,7 +53,7 @@ class Sidebar extends StatelessWidget {
             onTap: () {
               //remove all routes and go to members
               Navigator.pushNamedAndRemoveUntil(
-                  context, '/orders', (route) => false);
+                  context, '/storeBalance', (route) => false);
             }
           ),
         ],
